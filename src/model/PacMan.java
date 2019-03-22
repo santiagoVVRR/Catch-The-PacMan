@@ -2,6 +2,8 @@ package model;
 
 public class PacMan {
 	
+	public static final int ADVANCE = 5;
+	
 	private double radio;
 	private double posX;
 	private double posY;
@@ -9,8 +11,9 @@ public class PacMan {
 	private String direction;
 	private int bounce;
 	private boolean stoped;
+	private Move state;
 	
-	public PacMan(double radio, double posX, double posY, int wait, String direction, int bounce, boolean stoped) {
+	public PacMan(double radio, double posX, double posY, int wait, String direction, int bounce, boolean stoped, Move state) {
 		this.radio = radio;
 		this.posX = posX;
 		this.posY = posY;
@@ -18,6 +21,17 @@ public class PacMan {
 		this.direction = direction;
 		this.bounce = bounce;
 		this.stoped = stoped;
+		this.state = state;
+	}
+
+	
+	
+	public Move getState() {
+		return state;
+	}
+	
+	public void setState(Move state) {
+		this.state = state;
 	}
 
 	public double getRadio() {
@@ -74,6 +88,43 @@ public class PacMan {
 
 	public void setStoped(boolean stoped) {
 		this.stoped = stoped;
+	}
+	
+	public void move(int max) {
+		switch(state) {
+		case RIGHT:
+			if(posX+ADVANCE+radio>max) {
+				state = Move.LEFT;
+				posX = max-radio;
+			}else {
+				posX = posX+ADVANCE;
+			}
+			break;
+		case LEFT:
+			if(posX+ADVANCE+radio<0) {
+				state = Move.RIGHT;
+				posX = radio;
+			}else {
+				posX = posX-ADVANCE;
+			}
+			break;
+		case UP:
+			if(posY+ADVANCE+radio<max) {
+				state = Move.DOWN;
+				posY = max-radio;
+			}else {
+				posY = posY+ADVANCE;
+			}
+			break;
+		case DOWN:
+			if(posY+ADVANCE+radio<0) {
+				state = Move.UP;
+				posY = radio;
+			}else {
+				posY = posY-ADVANCE;
+			}
+			break;
+		}
 	}
 
 	

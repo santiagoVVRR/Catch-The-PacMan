@@ -21,8 +21,12 @@ public class Main extends Application{
 
 	@Override
 	public void start(Stage stage) throws Exception {
-		Parent root= FXMLLoader.load(getClass().getResource("screen.fxml"));
-       	
+		FXMLLoader loader = new FXMLLoader(getClass().getResource("screen.fxml"));
+		Parent root = loader.load();
+		
+		ControllerClass pc = loader.getController();
+		pc.setStage(stage);
+		
        	Scene scene= new Scene(root);
        	stage.setTitle("Catch the Pac-Man");
        	stage.setScene(scene);
