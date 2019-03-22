@@ -18,9 +18,9 @@ public class MoveThread extends Thread{
 	public void run() {
 		
 		while(true) {
-				pacman.move((int)pc.getWidth());
+				pacman.move((int)pc.getWidth(), (int)pc.geTHeigth());
 				try {
-					sleep(20);
+					sleep(pacman.getWait());
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}

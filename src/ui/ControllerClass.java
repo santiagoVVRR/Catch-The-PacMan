@@ -1,13 +1,13 @@
 package ui;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 
-import javafx.animation.AnimationTimer;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
@@ -24,6 +24,7 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import model.Move;
 import model.PacMan;
+import model.Score;
 import threads.ControlThread;
 import threads.MoveThread;
 
@@ -66,10 +67,6 @@ public class ControllerClass {
     private PacMan jimmy;
     
     private Arc pac;
-    
-    private int Levels;
-    
-    private boolean move;
     
     private Stage stage;
     
@@ -124,18 +121,46 @@ public class ControllerClass {
     }
 
     @FXML
-    void topScores(ActionEvent event) {
-
+    void topScores(ActionEvent event) throws IOException {
+    	Alert info = new Alert(AlertType.INFORMATION);
+    	info.setTitle("Top Scores");
+    	info.setHeaderText(null);
+    	info.initStyle(StageStyle.UTILITY);
+    	
+    	File f = new File("levels/topScores.txt");
+		FileReader fr = new FileReader(f);
+		BufferedReader br = new BufferedReader(fr);
+		
+		String line = br.readLine();
+		String txt = "";
+		while(line != null) {
+			String[] parts = line.split("-");
+			
+			String name = parts[0];
+			int score = Integer.parseInt(parts[1]);
+			
+			Score s = new Score(name, score);
+			txt = txt+s+"\n";
+			
+			line = br.readLine();
+		}
+		
+		br.close();
+		fr.close();
+    	
+    	info.setContentText(txt);
+    	info.show();
     }
+    
 
     public void loadGame(String path) {
-    	double radio;
-    	double posX;
-    	double posY;
-    	int waitt;
-    	String direction;
-    	int bounces;
-    	boolean stoped;
+    	double radio = 0;
+    	double posX = 0;
+    	double posY = 0;
+    	int waitt = 0;
+    	String direction = "";
+    	int bounces = 0;
+    	boolean stoped = false;
     	
     	try {
     		FileReader level = new FileReader(path);
@@ -178,62 +203,25 @@ public class ControllerClass {
     	}
     	
     	for(int i = 0; i < jim.size(); i++) {
-    		Arc p = new Arc(jim.get(i).getPosX(), jim.get(i).getPosY(), jim.get(i).getRadio(),jim.get(i).getRadio(),32,300);
-    		p.setFill(Color.YELLOW);
-    		p.setStroke(Color.BLACK);
-    		p.setStrokeWidth(3);
-    		p.setType(ArcType.ROUND);
-    		pane.getChildren().add(p);
-    		arcPa.add(p);
+    		pac = new Arc(jim.get(i).getPosX(), jim.get(i).getPosY(), jim.get(i).getRadio(),jim.get(i).getRadio(),32,300);
+    		pac.setFill(Color.YELLOW);
+    		pac.setStroke(Color.BLACK);
+    		pac.setStrokeWidth(3);
+    		pac.setType(ArcType.ROUND);
+    		pane.getChildren().add(pac);
+    		arcPa.add(pac);
     		
     		MoveThread ua = new MoveThread(this,  jim.get(i));
     		ua.setDaemon(true);
     		ua.start();
     	}
     }
-    
-    public void startGame() {
-    	for(int i = 0; i < jim.size(); i++) {
-    		
-    		pac = new Arc(jim.get(i).getPosX(),jim.get(i).getPosX(),jim.get(i).getRadio(),jim.get(i).getRadio(),32,300);
-    		pac.setFill(Color.YELLOW);
-    		pac.setStroke(Color.BLACK);
-    		pac.setStrokeWidth(3);
-    		pac.setType(ArcType.ROUND);
-    		pane.getChildren().add(pac);
-    		
-    	
-    	}
-    }
-    
-    public boolean openMouth() {
-    	
-    	if(move) {
-    		pac.setLength(pac.getLength()-5);
-    		pac.setStartAngle(pac.getStartAngle()+3);
-    	}
-    	if(pac.getLength()<270) {
-    		move = true;
-    	}
-		return move;
-    }
-    
-    public boolean closeMouth() {
-    	
-    	if(!move) {
-    		pac.setLength(pac.getLength()+5);
-    		pac.setStartAngle(pac.getStartAngle()-3);
-    	}
-    	if(pac.getLength()>=360) {
-    		move = false;
-    	}
-		return move;
-    }
-    
+      
     public void update() {
     	for(int i = 0; i < arcPa.size(); i++) {
     		arcPa.get(i).setLayoutX(jim.get(i).getPosX());
     		arcPa.get(i).setLayoutY(jim.get(i).getPosY());
+    		
     	}
     }
     
@@ -241,21 +229,15 @@ public class ControllerClass {
     	return stage.getScene().getWidth();
     }
     
+    public double geTHeigth() {
+		return stage.getScene().getHeight();
+	}
+    
     public void setStage(Stage g) {
     	stage = g;
     }
     
-    public ArrayList<Arc> getList(){
-    	return arcPa;
-    }
-    
-    public int getLevels() {
-		return Levels;
-	}
-
-	public void setLevels(int levels) {
-		Levels = levels;
-	}
+ 
 
 	@FXML
     void initialize() {
