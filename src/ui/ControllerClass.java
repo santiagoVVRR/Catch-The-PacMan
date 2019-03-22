@@ -2,8 +2,11 @@ package ui;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
@@ -14,7 +17,6 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
-import javafx.scene.control.MenuItem;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
@@ -42,14 +44,7 @@ public class ControllerClass {
     @FXML
     private Menu file;
 
-    @FXML
-    private MenuItem nGame1;
-
-    @FXML
-    private MenuItem lGame2;
-
-    @FXML
-    private MenuItem sGame3;
+   
 
     @FXML
     private Pane pane;
@@ -116,8 +111,10 @@ public class ControllerClass {
     }
     
     @FXML
-    void saveGame(ActionEvent event) {
-
+    void saveGame(ActionEvent event) throws FileNotFoundException, IOException {
+    	ObjectOutputStream typing = new ObjectOutputStream(new FileOutputStream("levels/scores.txt"));
+    	typing.writeObject(points);
+    	typing.close();
     }
 
     @FXML
